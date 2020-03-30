@@ -1,9 +1,12 @@
 # highavailability
 Optum Coding Challenge
 
-This project prequisite are :
+# This project prequisite are :
 1. JDK 1.8
 2. Eclipse or STS(as an IDE)
+
+# Build and Run Project
+1. Import the project and run as like java project
 
 # Problem Statement
 
@@ -59,3 +62,24 @@ host4: file5, file3
 8. Preferably code should be written in object oriented language
 9. If design patterns are used, please specify as part of code documentation.
 10. Assume that there is sufficient disk space in each of the host, so that there is no need to check if there is sufficient space in destination host before selecting it.
+
+# Explanation:
+
+1. Assumed that input can contain 2 copies each.
+2. The design has been implemented ConcurrentHashMap as the datastructure to store the cluster of nodes and files.
+3. ConcurrentHashMap is chosen for parellel processing across nodes and then files are stored in HashSet to lookup in the time complexity of O(1) or O(constant time)
+4. Nodes are parellel processed and files are stream processed from the down host, and then matched over the other hosts via concurrent lookup.
+5. Intermediate operations are peeked and published in LinkedBlockingQueue.
+6. Furthermore Queue is further polled synchronously, to allocate the random host apart from the source and down host, which again takes the time complexity O(no_of_files_in_down_host * no_of_hosts) time is optimized by concurrent processing.
+7. Input nodes are restructed by map.remove on O(constant_time)
+8. Regarding to the space complexity, The Actual input O(no_of_files_in_down_host * no_of_hosts) space, Blocking Queue takes the space complexity O(no_of_files)
+9. Design Pattern Adapted are: Singleton(for Cluster Access), Strategy(partition algorithm)
+
+# Improvements/ Self Analysis
+1. Larger Data set (May be B-tree)
+2. Two processing logics are required: 1. to find the sourcehost from fileset 2. to copy the file to random host
+3. Can this be reduced producer - consumer pattern or event loop pattern ? when to aggregate and stop ?
+
+# Feedback
+Thanks for the question to research and learn more about concurrency, stream and big data sets.
+
